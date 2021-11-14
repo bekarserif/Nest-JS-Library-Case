@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
+
 export type UserDocument = User & Document;
 export class Past extends Document {
     @Prop()
@@ -32,7 +33,7 @@ export class User {
     name: string;
 
     @Prop()
-    userName:string;
+    username:string;
 
     @Prop()
     password:string;

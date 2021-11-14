@@ -43,7 +43,7 @@ export class BooksService {
             break;
         }
       })
-
+      // use process.env
       const googleQuery = encodeURI(`/volumes?q=${q}&printType=books&maxResults=1&key=AIzaSyA7Vk_FXuQpTjCNLDJxTzMqpVGRT8uPPNA`)
       const res = await this.httpService.get(host + googleQuery).toPromise();
       console.log(res);

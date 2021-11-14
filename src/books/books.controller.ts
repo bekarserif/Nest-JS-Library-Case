@@ -1,9 +1,10 @@
-import { Body, Controller, Get, HttpStatus, Param,  Post, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param,  Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { query, Request } from 'express'
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { SearchBookDto } from './dto/search-book.dto';
 import { Response } from 'express';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 @Controller('books')
 export class BooksController {
     constructor(
@@ -11,6 +12,8 @@ export class BooksController {
 
     ) { }
     // Get Books
+
+    @UseGuards(JwtAuthGuard)
     @Get()
     async findAll(@Query() query:SearchBookDto, @Req() request: Request, @Res() res: Response) {
         try {
@@ -29,6 +32,7 @@ export class BooksController {
 
 
     // Create Book
+    @UseGuards(JwtAuthGuard)
     @Post()
     async create(@Body() createBookDto: CreateBookDto, @Res() res: Response) {
         try {

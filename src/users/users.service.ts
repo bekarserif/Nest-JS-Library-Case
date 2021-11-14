@@ -19,8 +19,8 @@ export class UsersService {
   }
 
   // Get User/[Id]
-  async findOne(id): Promise<User>{
-    return await this.userModel.findOne({id});
+  async findOne(query): Promise<User>{
+    return await this.userModel.findOne(query).select({ _id: 0, __v: 0 });
   }
 
   // Create User
