@@ -1,40 +1,41 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req, Res } from '@nestjs/common';
-import { Request } from 'express'
+import { Body, Controller, Get, HttpStatus, Param,  Post, Query, Req, Res } from '@nestjs/common';
+import { query, Request } from 'express'
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
-import { Book } from './schemas/book.schema';
+import { SearchBookDto } from './dto/search-book.dto';
 import { Response } from 'express';
 @Controller('books')
 export class BooksController {
     constructor(
         private readonly bookService: BooksService
-        
-        ) {}
+
+    ) { }
     // Get Books
     @Get()
-    findAll(@Req() request: Request): Promise<Book[]> {
-        return this.bookService.findAll();
+    async findAll(@Query() query:SearchBookDto, @Req() request: Request, @Res() res: Response) {
+        try {
+            if (Object.keys(query).length > 0) {
+                const book = await this.bookService.findOne(query);   
+                res.status(HttpStatus.OK).send(book);
+            }
+            else{
+                const books = await this.bookService.findAll();
+                res.status(HttpStatus.OK).send(books);
+            }
+        } catch (error) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).send()
+        }
     }
 
-    // Get Book/[id]
-    @Get(':id')
-    findOne(@Param() params):  Promise<Book> {
-      return this.bookService.findOne({id:Number(params.id)})
-    }
 
     // Create Book
     @Post()
-    async create(@Body() createBookDto: CreateBookDto, @Res() res:Response){
+    async create(@Body() createBookDto: CreateBookDto, @Res() res: Response) {
         try {
             await this.bookService.create(createBookDto);
             res.status(HttpStatus.CREATED).send();
         } catch (error) {
-            res.status(HttpStatus.INTERNAL_SERVER_ERROR).send() 
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).send()
         }
-        
     }
-
-   
-
-    
 }

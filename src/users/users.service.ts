@@ -40,12 +40,10 @@ export class UsersService {
     if (!book.isBorrowed) {
       this.booksService.findbyQueryAndUpdate({id:bookId},{
         isBorrowed:true})
-      user.books.present.push({
-        name:book.name
+      await this.userModel.updateOne({id},{
+        $push: { 'books.present': {name: book.name} }
       });
-      user.markModified('books');
-      await user.save();
-
+      
       return true;
     }
     return false;
@@ -59,12 +57,15 @@ export class UsersService {
     const indexOfPresentBook = user.books.present.findIndex((x)=>(x.name == book.name));
     if (indexOfPresentBook < -1) return false;
     user.books.present.splice(indexOfPresentBook, 1);
-    user.books.past.push({
-      name: book.name,
-      userScore
-    })
+    
     user.markModified('books');
-    user.save();
+    await user.save();
+    await this.userModel.updateOne({id},{
+      $push: { 'books.past': {
+        name: book.name,
+        userScore
+      } }
+    });
     return true;
   }
 }

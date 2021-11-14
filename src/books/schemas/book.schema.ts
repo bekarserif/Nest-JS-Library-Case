@@ -16,15 +16,18 @@ export class Book {
 
     @Prop()
     googleId: string;
-
-    @Prop()
-    etag: string;
     
     @Prop()
     selfLink: string;
     
     @Prop({type: Array})
     authors:[string]
+
+    @Prop()
+    language: string;
+
+    @Prop()
+    publishedDate: string;
 
     @Prop({ default: false})
     isBorrowed: boolean;
