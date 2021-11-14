@@ -1,5 +1,5 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Req } from '@nestjs/common';
-import { Request } from 'express'
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req, Res } from '@nestjs/common';
+import { Request, Response } from 'express'
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './schemas/user.schema';
 import { UsersService } from './users.service';
@@ -7,8 +7,8 @@ import { UsersService } from './users.service';
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
+    
     // Get Users
-
     @Get()
     findAll(): Promise<User[]>{
       return this.userService.findAll();
@@ -16,35 +16,50 @@ export class UsersController {
 
     // Get User/[id]
     @Get(':id')
-    findOne(@Param() params): string {
-      console.log(params.id);
-      return `This action returns a #${params.id} user`;
+    findOne(@Param() params): Promise<User> {
+      return this.userService.findOne(params.id);
     }
 
     // Get User/[id]
     @Post(':id/return/:bookId')
-    findOneAndReturnBook(@Param() params): string {
-      console.log(params.id);
-      console.log(params.bookId);
-      return `#${params.id} User returns ${params.bookId}`;
+    async findOneAndReturnBook(@Param() params, @Res() res:Response,@Body() body ) {
+      try {
+        const success = await this.userService.returnBook(params.id, params.bookId, body.score);
+        if (success) {
+          res.status(HttpStatus.OK).send();
+        }    
+        else{
+          res.status(HttpStatus.CONFLICT).send();
+        }
+      } catch (error) {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send() 
+      }
     }
 
     // Get User/[id]
     @Post(':id/borrow/:bookId')
-    findOneAndBorrowBook(@Param() params): string {
-    console.log(params.id);
-    console.log(params.bookId);
-    return `#${params.id} User borrows ${params.bookId}`;
+    async findOneAndBorrowBook(@Param() params, @Res() res:Response) {
+      try {
+        const success = await this.userService.borrowBook(params.id, params.bookId);
+        if (success) {
+          res.status(HttpStatus.OK).send();
+        }    
+        else{
+          res.status(HttpStatus.CONFLICT).send();
+        }
+      } catch (error) {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send() 
+      }
     }
 
     // Create User
     @Post()
-    @HttpCode(201)
-    async create(@Body() createUserDto: CreateUserDto) {
+    async create(@Body() createUserDto: CreateUserDto, @Res() res:Response) {
         try {
           await this.userService.create(createUserDto)
+          res.status(HttpStatus.CREATED).send();
         } catch (error) {
-          
+          res.status(HttpStatus.INTERNAL_SERVER_ERROR).send() 
         }
     }
 
