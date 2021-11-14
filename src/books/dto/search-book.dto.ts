@@ -1,9 +1,14 @@
+import { IsOptional } from "class-validator";
+
 export class SearchBookDto {
+    @IsOptional()
     readonly name: string;
+    @IsOptional()
     readonly id: number;
+    @IsOptional()
     readonly googleId: string;
-    readonly etag: string;
-    readonly selfLink: string;
+    @IsOptional()
     readonly author:string
+    @IsOptional()
     readonly isBorrowed: boolean;
 }

@@ -8,10 +8,9 @@ import { ModelIncModule } from './modelInc/modelInc.module';
 import { AuthModule } from './auth/auth.module';
 
 
-// use process.env
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/LibraryDb',{ connectionName: 'LibraryDb'}),
+    MongooseModule.forRoot(`mongodb://${process.env.Mongo_Ip}/${process.env.Mongo_Db}`,{ connectionName: 'LibraryDb'}),
     ModelIncModule,
     UsersModule, 
     BooksModule,

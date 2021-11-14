@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  library-case:
+    image: library-case
+    container_name: library-case
+    build: .
+    environment:
+      APP_ID: library-case
+      NODE_ENV: development
+      NODE_PORT: "3000"
+      Mongo_Ip: "host.docker.internal:27017"
+      Mongo_Db: "LibraryDb"
+      JwtSecret: "secretKey"
+      GoogleAPIKey: "AIzaSyA7Vk_FXuQpTjCNLDJxTzMqpVGRT8uPPNA"
+    ports:
+      - 3000:3000
+      - "9200:9200"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+
+networks:
+  erdis:
+    external: true      

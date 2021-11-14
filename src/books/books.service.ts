@@ -44,12 +44,13 @@ export class BooksService {
         }
       })
       // use process.env
-      const googleQuery = encodeURI(`/volumes?q=${q}&printType=books&maxResults=1&key=AIzaSyA7Vk_FXuQpTjCNLDJxTzMqpVGRT8uPPNA`)
+      const googleQuery = encodeURI(`/volumes?q=${q}&printType=books&maxResults=1&key=${process.env.GoogleAPIKey}`)
       const res = await this.httpService.get(host + googleQuery).toPromise();
-      console.log(res);
       if (res.data.totalItems > 0) {
         const bookValues = res.data.items[0];
-        const createdBook = await this.create({
+        const id = await this.modelIncService.getNextId(Book.name)
+        const createdBook = await this.bookModel.create({
+          id,
           name: bookValues.volumeInfo.title,
           googleId: bookValues.id,
           selfLink: bookValues.selfLink,

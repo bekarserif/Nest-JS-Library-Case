@@ -1,15 +1,11 @@
-import { IsArray, IsString } from "class-validator";
+import { IsArray, IsOptional, IsString } from "class-validator";
 
 export class CreateBookDto {
     @IsString()
     readonly name: string;
-    @IsString()
-    readonly googleId: string;
-    @IsString()
-    readonly selfLink: string;
-    @IsArray()
+    @IsOptional()
     readonly authors:[string]
-    @IsString()
+    @IsOptional()
     readonly language: string;
     @IsString()
     readonly publishedDate: string;
